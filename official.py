@@ -79,6 +79,10 @@ class GroupingApp(QMainWindow):
         self.output_area.setReadOnly(True)
         self.layout.addWidget(self.output_area)
 
+        # Progress bar
+        self.progress_bar = QProgressBar()
+        self.layout.addWidget(self.progress_bar)
+
         # Buttons
         self.button_generate = QPushButton("Start Randomizing")
         self.button_generate.clicked.connect(self.start_randomization)
@@ -142,6 +146,10 @@ class GroupingApp(QMainWindow):
             if self.iterations <= 0:
                 raise ValueError("Number of randomizations must be positive.")
 
+            # Initialize progress bar
+            self.progress_bar.setMaximum(self.iterations)
+            self.progress_bar.setValue(0)
+
             # Reset and start randomization
             self.current_iteration = 0
             self.output_area.clear()
@@ -155,6 +163,7 @@ class GroupingApp(QMainWindow):
     def perform_next_randomization(self):
         if self.current_iteration < self.iterations:
             self.current_iteration += 1
+            self.progress_bar.setValue(self.current_iteration)
             self.output_area.append(f"Randomization {self.current_iteration}:")
 
             # Perform grouping
@@ -171,6 +180,7 @@ class GroupingApp(QMainWindow):
         else:
             self.timer.stop()
             self.output_area.append("Randomization complete!")
+            self.progress_bar.setValue(self.iterations)
 
     def group_by_groups(self, members, num_groups):
         groups = [[] for _ in range(num_groups)]
